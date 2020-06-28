@@ -14,13 +14,6 @@ if [[ $- != *i* ]] ; then
 	return
 fi
 
-# Load aliases
-if [ -f ~/.bash_aliases ]; then
-	source ~/.bash_aliases
-fi
-
-export PATH=$PATH:~/bin
-
 #stty -ixon
 
 # Put your fun stuff here.
