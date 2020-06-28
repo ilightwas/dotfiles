@@ -1,5 +1,5 @@
 # /etc/skel/.bashrc
-#
+
 # This file is sourced by all *interactive* bash shells on startup,
 # including some apparently interactive shells such as scp and rcp
 # that can't tolerate any output.  So make sure this doesn't display
@@ -14,8 +14,11 @@ if [[ $- != *i* ]] ; then
 	return
 fi
 
-#stty -ixon
-
 # Put your fun stuff here.
+
+# Source my custom general aliases
+if [ -f "$HOME/.config/.aliases" ] ; then
+	source "$HOME/.config/.aliases"
+fi
 
 neofetch
