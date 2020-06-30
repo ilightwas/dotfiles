@@ -41,6 +41,7 @@ fi
 if [ -n "$failsafe" ]; then
   picom -b & 
   nitrogen --restore
+  dwm_bar.sh &
   exec startdwm.sh
 else
  exec $command
