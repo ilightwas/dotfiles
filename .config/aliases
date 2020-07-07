@@ -1,5 +1,6 @@
 # Manage dotfiles with bare git repo
-alias dotgit="git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
+alias gitdot="git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
+alias gitsys="git --git-dir=$HOME/.sysportage --work-tree=/etc/portage"
 
 # Clean dwm build
 alias dwmresetbuild="sudo make clean && rm -f config.h && git reset --hard upstream/master"
