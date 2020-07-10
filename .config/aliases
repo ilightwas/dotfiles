@@ -5,6 +5,9 @@ alias gitsys="git --git-dir=$HOME/.sysportage --work-tree=/etc/portage"
 # Clean dwm build
 alias dwmresetbuild="sudo make clean && rm -f config.h && git reset --hard upstream/master"
 
+# Suckless reinstall
+alias srein="sudo rm -f config.h && sudo make clean install"
+
 # Exits dwm
 alias dwmq="killall startdwm.sh"
 
