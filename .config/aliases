@@ -16,6 +16,8 @@ alias dwmq="killall startdwm.sh"
 alias \
 	ls="ls --color=auto --group-directories-first" \
 	grep="grep --color=auto" \
+	egrep="egrep --color=auto" \
+	fgrep="fgrep --color=auto" \
 	diff="diff --color=auto"
 
 alias \
