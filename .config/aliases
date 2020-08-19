@@ -20,8 +20,18 @@ alias \
 	fgrep="fgrep --color=auto" \
 	diff="diff --color=auto"
 
+# Verbosity
 alias \
 	cp="cp -iv" \
 	mv="mv -iv" \
 	rm="rm -Iv" \
 	mkdir="mkdir -pv" \
+
+# Navigation
+alias \
+	..="cd .." \
+	...="cd ../.." \
+	ll="ls -la" \
+	la="ls -a" \
+	l.="ls -a | egrep '^\.'" \
+
