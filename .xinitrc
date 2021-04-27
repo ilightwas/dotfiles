@@ -39,7 +39,7 @@ if [ -d /etc/X11/xinit/xinitrc.d ] ; then
 fi
 
 if [ -n "$failsafe" ]; then
-  picom -b & 
+  picom -cf -D7  --experimental-backends &
   nitrogen --restore
   dwm_bar.sh &
   exec startdwm.sh
