@@ -17,8 +17,8 @@ fi
 # Put your fun stuff here.
 
 # Source my custom general aliases
-if [ -f "$HOME/.config/aliases" ] ; then
-	source "$HOME/.config/aliases"
+if [ -f "$HOME/.config/aliasrc" ] ; then
+	. "$HOME/.config/aliasrc"
 fi
 
 function nonzero_return() {
