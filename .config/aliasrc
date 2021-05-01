@@ -36,3 +36,6 @@ alias \
 	la="ls -a" \
 	l.="ls -a | egrep '^\.'" \
 
+# Misc
+alias gchrome="google-chrome-stable --force-dark-mode"
+

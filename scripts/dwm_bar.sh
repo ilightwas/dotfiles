@@ -46,6 +46,6 @@ export SEP2="]"
 # Update dwm status bar every second
 while true
 do
-    xsetroot -name "$(dwm_spotify)$(dwm_resources)$(dwm_keyboard)$(dwm_pulse)$(dwm_date)"
+    xsetroot -name "^c#4278f5^$(dwm_spotify)^c#f5a142^$(dwm_resources)^c#6cf542^$(dwm_keyboard)^c#FF0000^$(dwm_pulse)^c#218ccf^$(dwm_date)"
     sleep 1
 done
