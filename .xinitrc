@@ -6,7 +6,6 @@ sysresources=/etc/X11/xinit/Xresources
 sysmodmap=/etc/X11/xinit/Xmodmap
 
 # merge in defaults and keymaps
-
 if [ -f $sysresources ]; then
     xrdb -merge $sysresources
 fi
@@ -24,18 +23,17 @@ if [ -f "$usermodmap" ]; then
 fi
 
 # start some nice programs
-
-if [ -n "`/etc/X11/chooser.sh`" ]; then
- command="`/etc/X11/chooser.sh`"
+if [ -n "$(/etc/X11/chooser.sh)" ]; then
+    command="$(/etc/X11/chooser.sh)"
 else
- failsafe="yes"
+    failsafe="yes"
 fi
 
-if [ -d /etc/X11/xinit/xinitrc.d ] ; then
- for f in /etc/X11/xinit/xinitrc.d/?* ; do
-  [ -x "$f" ] && . "$f"
- done
- unset f
+if [ -d /etc/X11/xinit/xinitrc.d ]; then
+    for f in /etc/X11/xinit/xinitrc.d/?*; do
+        [ -x "$f" ] && . "$f"
+    done
+    unset f
 fi
 
 # source xprofile
@@ -43,12 +41,10 @@ fi
 [ -f ~/.xprofile ] && . ~/.xprofile
 
 if [ -n "$failsafe" ]; then
-  #picom --experimental-backends &
-  picom &
-  nitrogen --restore
-  dwm_bar.sh &
-  exec startdwm.sh
+    picom --experimental-backends &
+    nitrogen --restore &
+    dwm_bar.sh &
+    exec startdwm.sh
 else
- exec $command
+    exec $command
 fi
-
