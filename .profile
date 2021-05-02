@@ -48,6 +48,8 @@ export READER="zathura"
 export WM="dwm"
 
 export SUCKLESS_DIR="$HOME/suckless"
+export DOTFILES_GIT_DIR="$XDG_DATA_HOME/dotfiles"
+export SYSPORTAGE_GIT_DIR="$XDG_DATA_HOME/sysportage"
 
 # Misc
 export _JAVA_AWT_WM_NONREPARENTING=1	# Fix for Java applications in dwm

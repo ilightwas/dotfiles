@@ -1,6 +1,6 @@
 # Manage dotfiles with bare git repo
-alias gitd="git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
-alias gits="git --git-dir=$HOME/.sysportage --work-tree=/etc/portage"
+alias gitd="git --git-dir=$DOTFILES_GIT_DIR --work-tree=$HOME"
+alias gits="git --git-dir=$SYSPORTAGE_GIT_DIR --work-tree=/etc/portage"
 alias cdp="cd /etc/portage"
 
 # Suckless
@@ -35,7 +35,11 @@ alias \
 alias codiumdwm="codium -n $SUCKLESS_DIR/dwm"
 alias codiumst="codium -n $SUCKLESS_DIR/st"
 alias codiumdmenu="codium -n $SUCKLESS_DIR/dmenu"
-alias codiumd="GIT_DIR=$HOME/.dotfiles GIT_WORK_TREE=$HOME codium -n $HOME"
-alias codiums="GIT_DIR=$HOME/.sysconfig GIT_WORK_TREE=/etc/portage codium -n /etc/portage"
+
+DOTFILESGIT="GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$HOME"
+SYSPORTAGEGIT="GIT_DIR=$SYSPORTAGE_GIT_DIR GIT_WORK_TREE=/etc/portage"
+
+alias codiumd="$DOTFILESGIT codium -n $HOME"
+alias codiums="$SYSPORTAGEGIT codium -n /etc/portage"
 alias gchrome="google-chrome-stable --force-dark-mode >>$XDG_CACHE_HOME/gchrome.log 2>&1 & disown"
 
