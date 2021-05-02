@@ -3,14 +3,9 @@ alias gitd="git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 alias gits="git --git-dir=$HOME/.sysportage --work-tree=/etc/portage"
 alias cdp="cd /etc/portage"
 
-# Clean dwm build
-alias dwmresetbuild="sudo make clean && rm -f config.h && git reset --hard upstream/master"
-
-# Suckless reinstall
-alias srein="sudo rm -f config.h && sudo make clean install"
-alias smci="sudo make clean install"
-
-# Exits dwm
+# Suckless
+alias srein="sudo make clean install"
+alias csrein="rm -f config.h && sudo make clean install"
 alias dwmq="killall startdwm.sh"
 
 # Colors
@@ -37,6 +32,9 @@ alias \
 	l.="ls -a | egrep '^\.'" \
 
 # Misc
+alias codiumdwm="codium -n $SUCKLESS_DIR/dwm"
+alias codiumst="codium -n $SUCKLESS_DIR/st"
+alias codiumdmenu="codium -n $SUCKLESS_DIR/dmenu"
 alias codiumd="GIT_DIR=$HOME/.dotfiles GIT_WORK_TREE=$HOME codium -n $HOME"
 alias codiums="GIT_DIR=$HOME/.sysconfig GIT_WORK_TREE=/etc/portage codium -n /etc/portage"
 alias gchrome="google-chrome-stable --force-dark-mode >>$XDG_CACHE_HOME/gchrome.log 2>&1 & disown"

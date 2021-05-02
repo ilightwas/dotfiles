@@ -47,6 +47,8 @@ export BROWSER="firefox"
 export READER="zathura"
 export WM="dwm"
 
+export SUCKLESS_DIR="$HOME/suckless"
+
 # Misc
 export _JAVA_AWT_WM_NONREPARENTING=1	# Fix for Java applications in dwm
 
