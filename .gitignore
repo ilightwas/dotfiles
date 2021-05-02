@@ -1,1 +1,42 @@
-*
+**/.git/*/**
+.cache
+.dbus
+.mozilla
+.pki
+.ssh
+.ssr
+.themes
+.vscode-oss
+.w3m
+
+# .config
+.config/discord
+.config/google-chr*
+.config/spotify
+
+# VSCodium settings
+.config/VSCodium/*
+!.config/VSCodium/User
+.config/VSCodium/User/*
+!.config/VSCodium/User/settings.json
+.config/pulse
+
+# .local
+.local/lib
+.local/share/dotfiles
+.local/share/sysportage
+.local/share/icons
+.local/share/Trash
+
+# folders
+desktop
+documents
+downloads
+music
+pictures
+public
+repos
+suckless
+templates
+videos
+win
