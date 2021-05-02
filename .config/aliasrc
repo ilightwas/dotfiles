@@ -36,6 +36,9 @@ alias codiumdwm="codium -n $SUCKLESS_DIR/dwm"
 alias codiumst="codium -n $SUCKLESS_DIR/st"
 alias codiumdmenu="codium -n $SUCKLESS_DIR/dmenu"
 
+# Portage
+alias aemerge="PORTAGE_NICENESS=-7 emerge" #aggressive emerge
+
 DOTFILESGIT="GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$HOME"
 SYSPORTAGEGIT="GIT_DIR=$SYSPORTAGE_GIT_DIR GIT_WORK_TREE=/etc/portage"
 
