@@ -37,5 +37,7 @@ alias \
 	l.="ls -a | egrep '^\.'" \
 
 # Misc
-alias gchrome="google-chrome-stable --force-dark-mode"
+alias codiumd="GIT_DIR=$HOME/.dotfiles GIT_WORK_TREE=$HOME codium -n $HOME"
+alias codiums="GIT_DIR=$HOME/.sysconfig GIT_WORK_TREE=/etc/portage codium -n /etc/portage"
+alias gchrome="google-chrome-stable --force-dark-mode >>$XDG_CACHE_HOME/gchrome.log 2>&1 & disown"
 
