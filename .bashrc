@@ -14,6 +14,9 @@ if [[ $- != *i* ]] ; then
 	return
 fi
 
+# Disable ctrl+s *suspend ctrl+q *resume
+stty -ixon
+
 # Put your fun stuff here.
 
 # Source my custom general aliases
