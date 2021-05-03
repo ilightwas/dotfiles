@@ -3,6 +3,11 @@ if [ -d "$HOME/.local/bin" ] ; then
 	export PATH="$PATH:$HOME/.local/bin"
 fi
 
+# Source status scripts
+if [ -d "$HOME/scripts/status" ] ; then
+	export PATH="$HOME/scripts/status:$PATH"
+fi
+
 # Source custom scripts
 if [ -d "$HOME/scripts" ] ; then
 	export PATH="$HOME/scripts:$PATH"
