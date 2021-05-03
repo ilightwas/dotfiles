@@ -31,18 +31,16 @@ alias \
 	la="ls -a" \
 	l.="ls -a | egrep '^\.'" \
 
-# Misc
-alias codiumdwm="codium -n $SUCKLESS_DIR/dwm"
-alias codiumst="codium -n $SUCKLESS_DIR/st"
-alias codiumdmenu="codium -n $SUCKLESS_DIR/dmenu"
-
 # Portage
 alias aemerge="PORTAGE_NICENESS=-7 emerge" #aggressive emerge
 
-DOTFILESGIT="GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$HOME"
-SYSPORTAGEGIT="GIT_DIR=$SYSPORTAGE_GIT_DIR GIT_WORK_TREE=/etc/portage"
+# Misc
+alias codiumgit="GIT_DIR=.git GIT_WORK_TREE=. codium -n"
+alias codiumdwm="codiumgit $SUCKLESS_DIR/dwm"
+alias codiumst="codiumgit $SUCKLESS_DIR/st"
+alias codiumdmenu="codiumgit $SUCKLESS_DIR/dmenu"
+alias codiumblocks="codiumgit $SUCKLESS_DIR/dwmblocks"
+alias codiumd="GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$HOME codium -n $HOME"
+alias codiums="GIT_DIR=$SYSPORTAGE_GIT_DIR GIT_WORK_TREE=/etc/portage codium -n /etc/portage"
 
-alias codiumd="$DOTFILESGIT codium -n $HOME"
-alias codiums="$SYSPORTAGEGIT codium -n /etc/portage"
 alias gchrome="google-chrome-stable --force-dark-mode >>$XDG_CACHE_HOME/gchrome.log 2>&1 & disown"
-
