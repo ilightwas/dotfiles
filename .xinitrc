@@ -36,14 +36,10 @@ if [ -d /etc/X11/xinit/xinitrc.d ]; then
     unset f
 fi
 
-# source xprofile
-[ -f /etc/xprofile ] && . /etc/xprofile
-[ -f ~/.xprofile ] && . ~/.xprofile
-
 if [ -n "$failsafe" ]; then
-    picom --experimental-backends &
-    nitrogen --restore &
-    dwm_bar.sh &
+    # source xprofile
+    [ -f /etc/xprofile ] && . /etc/xprofile
+    [ -f "$HOME/.xprofile" ] && . "$HOME/.xprofile"
     exec startdwm.sh
 else
     exec $command

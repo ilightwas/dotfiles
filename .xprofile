@@ -1,3 +1,8 @@
+# start stuff
+picom --experimental-backends &
+nitrogen --restore &
+dwmblocks &
 
-# Nothing to start for now
+pulseaudio --start &
+
 discord &

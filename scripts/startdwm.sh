@@ -1,7 +1,8 @@
 #!/bin/sh
 
-#while true; do
+while true; do
 	# Log both stdout/stderr
-	dwm >~/.dwm.log 2>&1
-#done
+	dwm >>~/.dwm.log 2>&1
+	sleep 10
+done
 
