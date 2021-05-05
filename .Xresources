@@ -13,9 +13,9 @@ Xft.dpi: 96
 ! -----------------------------------------------------------------------------
 ! st 
 ! -----------------------------------------------------------------------------
-st.font: JetBrainsMonoNL Nerd Font:style:medium:size=10
-st.alpha: 1
-st.borderpx: 0
+St.font: JetBrainsMonoNL Nerd Font:style:Medium:size=10
+St.alpha: 1
+St.borderpx: 0
 
 ! -----------------------------------------------------------------------------
 ! Color schemes

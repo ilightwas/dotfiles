@@ -3,6 +3,6 @@
 while true; do
 	# Log both stdout/stderr
 	dwm >>~/.dwm.log 2>&1
-	sleep 10
+	sleep 5
 done
 
