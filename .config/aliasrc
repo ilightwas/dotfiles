@@ -34,6 +34,10 @@ alias \
 # Portage
 alias aemerge="PORTAGE_NICENESS=-7 emerge" #aggressive emerge
 
+# vi
+alias vim="nvim"
+alias oldvim="\vim"
+
 # Misc
 alias codiumgit="GIT_DIR=.git GIT_WORK_TREE=. codium -n"
 alias codiumdwm="codiumgit $SUCKLESS_DIR/dwm"

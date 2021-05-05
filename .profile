@@ -42,8 +42,8 @@ export LESS_TERMCAP_ue=$(printf %b '\e[0m')
 export LESS_TERMCAP_us=$(printf %b '\e[1;31m') # Highlights 
 
 # Enviroment vars
-export EDITOR="vim"
-export VISUAL="vim"
+export EDITOR="nvim"
+export VISUAL="nvim"
 export CODEEDITOR="vscodium"
 export PAGER="less"
 export TERMINAL="st"
