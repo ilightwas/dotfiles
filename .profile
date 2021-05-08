@@ -1,6 +1,6 @@
-# Adds `~/.local/bin` to $PATH
-if [ -d "$HOME/.local/bin" ] ; then
-	export PATH="$PATH:$HOME/.local/bin"
+# Source custom scripts
+if [ -d "$HOME/scripts" ] ; then
+	export PATH="$HOME/scripts:$PATH"
 fi
 
 # Source status scripts
@@ -8,9 +8,9 @@ if [ -d "$HOME/scripts/status" ] ; then
 	export PATH="$HOME/scripts/status:$PATH"
 fi
 
-# Source custom scripts
-if [ -d "$HOME/scripts" ] ; then
-	export PATH="$HOME/scripts:$PATH"
+# Adds `~/.local/bin` to $PATH
+if [ -d "$HOME/.local/bin" ] ; then
+	export PATH="$HOME/.local/bin:$PATH"
 fi
 
 # XDG
