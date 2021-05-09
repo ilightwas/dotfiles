@@ -1,8 +1,8 @@
-# start stuff
-picom --experimental-backends &
-nitrogen --restore &
-dwmblocks &
+# Logging helper
+. "$HOME/scripts/logmy.sh"
 
-pulseaudio --start &
-
-discord &
+logmy.sh picom --experimental-backends &
+logmy.sh nitrogen --restore &
+logmy.sh dwmblocks &
+logmy.sh pulseaudio --start &
+logmy.sh discord &

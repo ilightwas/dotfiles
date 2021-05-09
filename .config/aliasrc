@@ -48,4 +48,4 @@ alias codiumblocks="codiumgit $SUCKLESS_DIR/dwmblocks"
 alias codiumd="GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$HOME codium -n $HOME"
 alias codiums="GIT_DIR=$SYSPORTAGE_GIT_DIR GIT_WORK_TREE=/etc/portage codium -n /etc/portage"
 
-alias gchrome="google-chrome-stable --force-dark-mode >>$XDG_CACHE_HOME/gchrome.log 2>&1 & disown"
+alias gchrome="logmy.sh google-chrome-stable --force-dark-mode & disown"

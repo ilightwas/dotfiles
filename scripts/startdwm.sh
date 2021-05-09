@@ -1,8 +1,9 @@
 #!/bin/sh
 
+# Logging helper
+. "$HOME/scripts/logmy.sh"
+
 while true; do
-	# Log both stdout/stderr
-	dwm >>~/.dwm.log 2>&1
+	logmy.sh dwm
 	sleep 5
 done
-
