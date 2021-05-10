@@ -1,5 +1,3 @@
-# Logging helper
-. "$HOME/scripts/logmy.sh"
 
 logmy.sh picom --experimental-backends &
 logmy.sh nitrogen --restore &
