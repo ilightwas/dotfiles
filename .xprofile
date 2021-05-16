@@ -1,6 +1,6 @@
 
+feh --recursive --bg-fill --randomize "$HOME/images/wallpaper"
 logmy.sh picom --experimental-backends &
-logmy.sh nitrogen --restore &
 logmy.sh dwmblocks &
 logmy.sh pulseaudio --start &
 logmy.sh discord &
