@@ -22,7 +22,7 @@ dwm.selbordercolor: #991111
 ! -----------------------------------------------------------------------------
 ! st 
 ! -----------------------------------------------------------------------------
-St.font: stfont:size=10:antialias=true:hinting=true:hintstyle=hintslight
+! St.font: stfont:size=10:antialias=true:hinting=true:hintstyle=hintslight
 St.alpha: 1
 St.borderpx: 0
 
