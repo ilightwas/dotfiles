@@ -1,6 +1,22 @@
 
-feh --recursive --bg-fill --randomize "$HOME/images/wallpaper"
-logmy.sh picom --experimental-backends &
-logmy.sh dwmblocks &
-logmy.sh pulseaudio --start &
-logmy.sh discord &
+startBrowser() {
+	#psd service init script modified to create this tmp file after finish starting
+	psd="/tmp/psdstarted"
+	
+	# start after psd daemon
+	while [ ! -e "$psd" ]; do
+		sleep 1;
+	done
+
+	rm "$psd"
+	notify-send "Starting chrome"
+	logmy.sh google-chrome-stable --force-dark-mode
+}
+
+feh --recursive --bg-fill --randomize "$HOME/images/wallpaper" &
+sleep 1 && notify-send "Starting picom";	logmy.sh picom --experimental-backends &
+sleep 2 && notify-send "Starting pulseaudio";	logmy.sh pulseaudio --start &
+sleep 3 && notify-send "Starting dwmblocks";	logmy.sh dwmblocks &
+sleep 4 && notify-send "Starting discord";	logmy.sh discord &
+sleep 5 && startBrowser &
+
