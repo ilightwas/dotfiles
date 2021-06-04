@@ -24,6 +24,11 @@ if [ -f "$HOME/.config/aliasrc" ] ; then
 	. "$HOME/.config/aliasrc"
 fi
 
+# Source custom functions
+if [ -f "$HOME/.config/shfunctionsrc" ] ; then
+	. "$HOME/.config/shfunctionsrc"
+fi
+
 function nonzero_return() {
 	RETVAL=$?
 	[ $RETVAL -ne 0 ] && echo " $RETVAL"
