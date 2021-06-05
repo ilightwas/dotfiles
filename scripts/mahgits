@@ -1,0 +1,232 @@
+#!/bin/sh
+
+# Simple tool to add remotes for most used git hosts for the same repo
+# repos must be created before hand on listed hosts
+# for now only github, gitlab and bitbucket 
+
+if [ ! -e ".git" ]; then
+	printf "Not in a git directory.\nExiting...\n" >&2
+	exit 3
+fi
+
+red='\033[1;31m'
+green='\033[1;32m'
+rs='\033[0m'
+# remotesfile=".bgit.remotes"
+
+# remote name followed by the url
+remotes="github git@github.com gitlab git@gitlab.com bitbucket git@bitbucket.org"
+
+usage() {
+	printf "usage: mahgits { [--init [-f] ] | [-a] | [-b branch] | [-r] }
+	--init   \tSet all new remotes
+	-f       \tForces Init
+	-r       \tRemoves remotes from git repo
+	-a       \tPush all branches
+	-b branch\tPush one branch\n"
+}
+
+ask() {
+	askinput=""
+	while [ "$askinput" != "y" ] && [ "$askinput" != "n" ]; do
+		printf "$2 (y | n):" 
+		read -r askinput 
+		[ -z "$askinput" ] && askinput="$3"
+	done
+
+	eval "$1=$askinput"
+}
+
+chechSSHAgent() {
+	if ! pidof ssh-agent > /dev/null ; then
+		echo "Starting ssh-agent on current shell"
+		eval "$(ssh-agent)"
+	fi
+}
+
+getRemotes() {
+	# cut -d\  -f1 $remotesfile
+	rout=""
+	set -- $remotes # word splitting
+	while : ; do
+		[ -z "$1" ] || [ -z "$2" ] && break; 
+		rout="$rout $1"
+		shift 2
+	done
+	echo "${rout# }"
+}
+
+getBranches() {
+	git branch | tr -d '* '
+}
+
+checkremotestoadd() {
+	curremotes="$(git remote show)"
+	initremotes=""
+
+	for r in $(getRemotes); do
+		if ! echo "$curremotes" | grep -q "\b$r\b"; then
+			initremotes="$initremotes $r"
+		fi
+	done
+
+	if [ -z "$initremotes" ]; then
+		printf "Remotes: $red'%s'$rs are already set\nUse -f to force setting all remotes\n" >&2 "$(getRemotes)"
+		exit 5
+	fi
+}
+
+initRemotes() {
+	
+	initremotes=""
+	[ -z "$force" ] && checkremotestoadd || initremotes="$(getRemotes)"
+	printf "To add remotes $red'%s'$rs\n" "${initremotes# }"
+	okinput=0
+	answer=""
+	while [ $okinput -eq 0 ]; do
+		printf "Enter the ssh user: " 
+		read -r user
+		printf "Enter the repository name: "
+		read -r repo
+
+		repoinfo=":$user/$repo"
+		ask "answer" "user: $user\nrepo: $repo\nconfirm?"
+		[ "$answer" = "y" ] && okinput=1;
+	done
+
+	set -- $remotes # word splitting
+	while : ; do
+		[ -z "$1" ] || [ -z "$2" ] && break;
+
+		if ! echo "$initremotes" | grep -q "\b$1\b"; then
+			printf "Skipping add remote %s\n" "$r"
+			shift 2
+			continue
+		fi
+
+		remotetoadd="$1 $2$repoinfo"
+		if [ -z "$force" ]; then
+			printf "Adding remote $red'%s'$rs\n" "$remotetoadd"
+			git remote add $remotetoadd # word splitting 
+		else
+			printf "Force Adding remote $red'%s'$rs\n" "$remotetoadd"
+			git remote remove "$1"
+			git remote add $remotetoadd # word splitting 
+		fi
+		shift 2
+	done
+	echo "${green}Remotes added$rs"
+	exit 0
+}
+
+checkremotes() {
+	curremotes="$(git remote show)"
+	for r in $(getRemotes); do
+		if ! echo "$curremotes" | grep -q "\b$r\b"; then
+			printf "Missing %s remote\n" "$r" >&2
+			missing=1
+		fi
+	done
+
+	if [ -n "$missing" ]; then
+		printf "Use --init to set remotes\n" >&2
+		exit 5
+	fi
+}
+
+pushall() {
+	checkremotes
+	for r in $(getRemotes); do
+		echo "Pushing all branches to remote: $red$r$rs"
+		git push --all "$r"
+	done
+	printf "${green}Pushed all branches to all remotes$rs\n"
+	exit 0
+}
+
+removeremotes() {
+	curremotes="$(git remote show)"
+	for r in $(getRemotes); do
+		if echo "$curremotes" | grep -q "\b$r\b"; then
+			printf "Removing $red'%s'$rs remote\n" "$r" >&2
+			git remote remove "$r"
+		fi
+	done
+	exit 0
+}
+
+pushbranches() {
+	if [ -n "$rremotes" ]; then
+		removeremotes
+	fi
+	checkremotes
+	branches="$(getBranches)"
+	btopush=""	
+	for b in $branches; do
+		ask "answer" "Push branch: $red'$b'$rs ? [y]" "y"	
+		[ "$answer" = "y" ] && btopush="$btopush $b"
+	done	
+	btopush="${btopush# }"
+
+	if [ -z "$btopush" ]; then
+		printf "No branches selected\n" >&2
+		exit 8
+	fi
+
+	for r in $(getRemotes); do
+		printf "Pushing branches: $red%s$rs to remote %s\n" "$btopush" "$r"
+		git push $r $btopush
+	done
+	printf "${green}Pushed branches: $red'%s'$rs$green to all remotes$rs\n" "$btopush"
+}
+
+pushone() {
+	checkremotes
+	if ! getBranches | grep -q "\b$onebranch\b"; then
+		printf "The branch $red%s$rs does not exist\n" "$onebranch" >&2
+		exit 7
+	fi
+	
+	for r in $(getRemotes); do
+		echo "Pushing branch $red$onebranch$rs to remote $r"
+		git push "$r" "$onebranch"
+	done
+	echo "Pushed branch $red$onebranch$rs to all remotes"
+}
+
+if ! ARGS=$(getopt -n "mahgits" -o ab:fhr -l init -- "$@"); then
+	usage
+	exit 4
+fi
+
+eval set -- "$ARGS"
+while : ; do
+	case "$1" in
+		-a) pushall=1; shift ;;
+		-b) pushone=1; onebranch="$2"; shift 2 ;;
+		-f) force=1; shift ;;
+		-h) usage; exit 0 ;;
+		-r) rremotes=1; shift ;;
+		--init) isinit=1; shift ;;
+		--) shift; break ;;
+		*) echo "Unexpected option: $1" >&2; usage; exit 1 ;;
+	esac
+done
+
+if [ -n "$1" ]; then
+	echo "Unexpected option  $1" >&2
+	usage
+	exit 1
+fi
+
+chechSSHAgent
+
+[ -n "$isinit" ] && initRemotes
+[ -n "$pushall" ] && pushall
+[ -n "$pushone" ] && pushone
+
+# default, no args
+if [ -z "${1+x}" ]; then
+	pushbranches
+fi
+
