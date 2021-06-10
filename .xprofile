@@ -1,11 +1,13 @@
 
 startBrowser() {
-	#psd service init script modified to create this tmp file after finish starting
+	# psd service init script modified to create this tmp file after finish starting
 	psd="/tmp/psdstarted"
-	
+	tries=0	
 	# start after psd daemon
 	while [ ! -e "$psd" ]; do
+		tries=$(( tries + 1 ))
 		sleep 1;
+		[ "$tries" -gt 60 ] && notify-send "Failed to start chrome in 1m" && exit 1
 	done
 
 	rm "$psd"
@@ -14,9 +16,11 @@ startBrowser() {
 }
 
 feh --recursive --bg-fill --randomize "$HOME/images/wallpaper" &
-sleep 1 && notify-send "Starting picom";	logmy.sh picom --experimental-backends &
-sleep 2 && notify-send "Starting pulseaudio";	logmy.sh pulseaudio --start &
-sleep 3 && notify-send "Starting dwmblocks";	logmy.sh dwmblocks &
-sleep 4 && notify-send "Starting discord";	logmy.sh discord &
-sleep 5 && startBrowser &
+notify-send "Starting ssh-agent";	eval "$(ssh-agent -t 1h)"
+
+sleep 3 && {  notify-send "Starting picom";		logmy.sh picom --experimental-backends; } &
+sleep 5 && {  notify-send "Starting pulseaudio";	logmy.sh pulseaudio --start; } &
+sleep 7 && {  notify-send "Starting dwmblocks";		logmy.sh dwmblocks; } &
+sleep 9 && {  notify-send "Starting discord";		logmy.sh discord; } &
+sleep 11 && {  startBrowser; } &
 
