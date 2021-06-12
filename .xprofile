@@ -10,12 +10,11 @@ startBrowser() {
 		[ "$tries" -gt 60 ] && notify-send "Failed to start chrome in 1m" && exit 1
 	done
 
-	rm "$psd"
 	notify-send "Starting chrome"
 	logmy.sh google-chrome-stable --force-dark-mode
 }
 
-feh --recursive --bg-fill --randomize "$HOME/images/wallpaper" &
+feh --no-fehbg --recursive --bg-fill --randomize "$HOME/images/wallpaper" &
 notify-send "Starting ssh-agent";	eval "$(ssh-agent -t 1h)"
 
 sleep 3 && {  notify-send "Starting picom";		logmy.sh picom --experimental-backends; } &
