@@ -32,6 +32,9 @@ export HISTFILESIZE=100000
 export HISTTIMEFORMAT="%d/%m/%y %T "
 export HISTFILE="$XDG_DATA_HOME/history"
 
+#less
+export LESSHISTFILE="$XDG_CACHE_HOME/lesshst"
+
 # Less/Man pages color
 export LESS_TERMCAP_mb=$(printf %b '\e[1;31m')
 export LESS_TERMCAP_md=$(printf %b '\e[1;35m') # Header
