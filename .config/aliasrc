@@ -40,6 +40,7 @@ alias oldvim="\vim"
 
 # Misc
 alias sudo='sudo '
+alias codium='vscodium'
 alias codiumgit="GIT_DIR=.git GIT_WORK_TREE=. codium -n"
 alias codiumdwm="codiumgit $SUCKLESS_DIR/dwm"
 alias codiumst="codiumgit $SUCKLESS_DIR/st"
