@@ -10,3 +10,9 @@ map <Leader>O O<ESC>
 map <C-j> :bprev<CR>
 map <C-k> :bnext<CR>
 
+"Copy paste system clipboard
+vnoremap <C-c> "+y
+map <C-p> "+P
+
+"vnoremap <C-c> "*y :let @+=@*<CR>
+
