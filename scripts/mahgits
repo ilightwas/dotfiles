@@ -4,83 +4,133 @@
 # repos must be created before hand on listed hosts
 # for now only github, gitlab and bitbucket 
 
-if [ ! -e ".git" ]; then
-	printf "Not in a git directory.\nExiting...\n" >&2
-	exit 3
-fi
+# Disable file globbing
+set -f
 
-red='\033[1;31m'
-green='\033[1;32m'
-rs='\033[0m'
-# remotesfile=".bgit.remotes"
+[ -n "$XDG_CONFIG_HOME" ] && configDir="$XDG_CONFIG_HOME/mahgits" || configDir="$HOME/.config/mahgits"
+
+authFile="$configDir/auth"
+
+githubAPI='https://api.github.com/user/repos' 
+bitbucketAPI='https://api.bitbucket.org/2.0' 
+gitlabAPI='https://gitlab.com/api/v4/projects' 
+
+# Flags
+isInit=0
+force=0
+pushOne=0
+pushAll=0
+rRemotes=0
+createRepos=0
 
 # remote name followed by the url
 remotes="github git@github.com gitlab git@gitlab.com bitbucket git@bitbucket.org"
+curRemotes="$(git remote show)"
 
-usage() {
-	printf "usage: mahgits { [--init [-f] ] | [-a] | [-b branch] | [-r] }
-	--init   \tSet all new remotes
-	-f       \tForces Init
-	-r       \tRemoves remotes from git repo
-	-a       \tPush all branches
-	-b branch\tPush one branch\n"
-}
-
-ask() {
-	askinput=""
-	while [ "$askinput" != "y" ] && [ "$askinput" != "n" ]; do
-		printf "$2 (y | n):" 
-		read -r askinput 
-		[ -z "$askinput" ] && askinput="$3"
-	done
-
-	eval "$1=$askinput"
-}
-
-chechSSHAgent() {
-	if ! pidof ssh-agent > /dev/null ; then
-		echo "Starting ssh-agent on current shell"
-		eval "$(ssh-agent)"
-	fi
-}
-
-getRemotes() {
-	# cut -d\  -f1 $remotesfile
+getRemoteNames() {
 	rout=""
+	# shellcheck disable=SC2086
 	set -- $remotes # word splitting
 	while : ; do
 		[ -z "$1" ] || [ -z "$2" ] && break; 
 		rout="$rout $1"
 		shift 2
 	done
-	echo "${rout# }"
+	printf "%s\n" "${rout# }"
 }
 
-getBranches() {
-	git branch | tr -d '* '
+remoteNames="$(getRemoteNames)"
+
+inColor() {
+	color=""
+	case "$1" in
+		# 0 = black
+		1) color="\033[1;31m" ;; # red
+		2) color="\033[1;32m" ;; # green
+		3) color="\033[1;33m" ;; # yellow
+		4) color="\033[1;34m" ;; # blue
+		5) color="\033[1;35m" ;; # purple
+		6) color="\033[1;36m" ;; # teal
+		7) color="\033[1;37m" ;; # white
+		*) printf "Invalid option %s \nColor is not set\n" "$1" >&2 ;;
+	esac
+	printf "%b" "$color$2\033[0m"
 }
 
-checkremotestoadd() {
-	curremotes="$(git remote show)"
-	initremotes=""
+usage() {
+	printf "usage: mahgits [--init [-f] ] | [-a] | [-b branch] | [-r] | [--create [-f] ]
+	--init   \tSet all new remotes in current git repo
+	--create \tWill create the remote repos and set api tokens file
+	-f       \tForces Init, overwriting remotes, api tokens file rewrite
+	-r       \tRemoves remotes from git repo
+	-a       \tPush all branches to all remotes
+	-b branch\tPush one branch to all remotes\n"
+}
 
-	for r in $(getRemotes); do
-		if ! echo "$curremotes" | grep -q "\b$r\b"; then
-			initremotes="$initremotes $r"
-		fi
+ask() {
+	askInput=""
+	while [ "$askInput" != "y" ] && [ "$askInput" != "n" ]; do
+		printf "%b (y | n): " "$2" 
+		read -r askInput 
+		[ -z "$askInput" ] && askInput="$3"
 	done
 
-	if [ -z "$initremotes" ]; then
-		printf "Remotes: $red'%s'$rs are already set\nUse -f to force setting all remotes\n" >&2 "$(getRemotes)"
-		exit 5
+	eval "$1=$askInput"
+}
+
+chechSSHAgent() {
+	if ! pidof ssh-agent > /dev/null ; then
+		printf "%b\n" "$(inColor 2 'Starting ssh-agent on current shell')"
+		eval "$(ssh-agent)"
 	fi
+}
+
+checkRemotes() {
+	isMissing=0
+	
+	for r in $remoteNames; do
+		missingThisOne=1
+		for cr in $curRemotes; do
+			[ "$r" = "$cr" ] && missingThisOne=0 && break
+		done
+
+		[ "$missingThisOne" -eq 1 ] && {
+			printf "Missing %b remote\n" "$(inColor 1 "$r")" >&2
+			isMissing=1
+		}
+	done
+
+	[ "$isMissing" -eq 1 ] && {
+		printf "Use --init to set remotes\n" >&2
+		exit 1
+	}
+}
+
+checkRemotesToAdd() {
+
+	for r in $remoteNames; do
+		missingRemote=1
+		for cr in $curRemotes; do
+			[ "$r" = "$cr" ] && missingRemote=0 && break
+		done
+		[ $missingRemote -eq 1 ] && initRemotes="$initRemotes $r"
+	done
+
+	initRemotes="${initRemotes# }"
+	[ -z "$initRemotes" ] && {
+		printf "Remotes: '%b' are already set\nUse -f to force setting all remotes\n" "$(inColor 1 "$remoteNames")" >&2 
+		exit 1
+	}
 }
 
 initRemotes() {
 	
-	initremotes=""
-	[ -z "$force" ] && checkremotestoadd || initremotes="$(getRemotes)"
-	printf "To add remotes $red'%s'$rs\n" "${initremotes# }"
+	initRemotes=""
+	# shellcheck disable=SC2015
+	[ "$force" -eq 1 ] && initRemotes="$remoteNames" || checkRemotesToAdd 
+	initRemotes="${initRemotes# }"
+	printf "To add remotes '%b'\n" "$(inColor 1 "$initRemotes")"
+
 	okinput=0
 	answer=""
 	while [ $okinput -eq 0 ]; do
@@ -90,143 +140,332 @@ initRemotes() {
 		read -r repo
 
 		repoinfo=":$user/$repo"
-		ask "answer" "user: $user\nrepo: $repo\nconfirm?"
+		ask "answer" "user: $user\nrepo: $repo\nConfirm?"
 		[ "$answer" = "y" ] && okinput=1;
 	done
 
+	# shellcheck disable=SC2086
 	set -- $remotes # word splitting
 	while : ; do
 		[ -z "$1" ] || [ -z "$2" ] && break;
 
-		if ! echo "$initremotes" | grep -q "\b$1\b"; then
-			printf "Skipping add remote %s\n" "$r"
+		if ! echo "$initRemotes" | grep -q "\b$1\b"; then
+			printf "Skipping remote %b\n" "$(inColor 1 "$r")"
 			shift 2
 			continue
 		fi
 
 		remotetoadd="$1 $2$repoinfo"
 		if [ -z "$force" ]; then
-			printf "Adding remote $red'%s'$rs\n" "$remotetoadd"
+			printf "Adding remote '%b'\n" "$(inColor 1 "$remotetoadd")"
+			# shellcheck disable=SC2086
 			git remote add $remotetoadd # word splitting 
 		else
-			printf "Force Adding remote $red'%s'$rs\n" "$remotetoadd"
+			printf "Force Adding remote '%b'\n" "$(inColor 1 "$remotetoadd")"
 			git remote remove "$1"
+			# shellcheck disable=SC2086
 			git remote add $remotetoadd # word splitting 
 		fi
 		shift 2
 	done
-	echo "${green}Remotes added$rs"
+	printf "%b\n%b\n" "$(inColor 2 'Remotes added')" "$(inColor 4 'To create the remote repos if needed use --create')"
 	exit 0
 }
 
-checkremotes() {
-	curremotes="$(git remote show)"
-	for r in $(getRemotes); do
-		if ! echo "$curremotes" | grep -q "\b$r\b"; then
-			printf "Missing %s remote\n" "$r" >&2
-			missing=1
-		fi
-	done
-
-	if [ -n "$missing" ]; then
-		printf "Use --init to set remotes\n" >&2
-		exit 5
-	fi
-}
-
-pushall() {
-	checkremotes
-	for r in $(getRemotes); do
-		echo "Pushing all branches to remote: $red$r$rs"
+pushAllBranches() {
+	checkRemotes
+	for r in $remoteNames; do
+		printf "Pushing all branches to remote: %b\n" "$(inColor 1 "$r")"
 		git push --all "$r"
 	done
-	printf "${green}Pushed all branches to all remotes$rs\n"
-	exit 0
+	printf "%b\n" "$(inColor 2 'Pushed all branches to all remotes')"
 }
 
-removeremotes() {
-	curremotes="$(git remote show)"
-	for r in $(getRemotes); do
-		if echo "$curremotes" | grep -q "\b$r\b"; then
-			printf "Removing $red'%s'$rs remote\n" "$r" >&2
-			git remote remove "$r"
-		fi
+removeRemotes() {
+	for r in $remoteNames; do
+		for cr in $curRemotes; do
+			[ "$r" = "$cr" ] && {
+				printf "Removing '%b' remote\n" "$(inColor 1 "$r")" >&2
+				git remote remove "$r"
+			}
+		done
 	done
-	exit 0
 }
 
-pushbranches() {
-	if [ -n "$rremotes" ]; then
-		removeremotes
-	fi
-	checkremotes
-	branches="$(getBranches)"
+pushBranches() {
+	[ "$rRemotes" -eq 1 ] && removeRemotes && exit 0
+	checkRemotes
+	branches="$(git branch | tr -d '* ')"
 	btopush=""	
 	for b in $branches; do
-		ask "answer" "Push branch: $red'$b'$rs ? [y]" "y"	
+		ask "answer" "Push branch: '$(inColor 1 "$b")' ? [y]" "y"	
 		[ "$answer" = "y" ] && btopush="$btopush $b"
 	done	
 	btopush="${btopush# }"
 
 	if [ -z "$btopush" ]; then
 		printf "No branches selected\n" >&2
-		exit 8
+		exit 1
 	fi
 
-	for r in $(getRemotes); do
-		printf "Pushing branches: $red%s$rs to remote %s\n" "$btopush" "$r"
-		git push $r $btopush
+	for r in $remoteNames; do
+		printf "Pushing '%b' to remote '%b'\n" "$(inColor 1 "$btopush")" "$(inColor 3 "$r")"
+		# shellcheck disable=SC2086
+		git push "$r" $btopush # word splitting
 	done
-	printf "${green}Pushed branches: $red'%s'$rs$green to all remotes$rs\n" "$btopush"
+	printf "%b '%b' %b\n" "$(inColor 2 'Pushed branches:')" "$(inColor 1 "$btopush")" "$(inColor 2 'to all remotes')"
 }
 
-pushone() {
-	checkremotes
-	if ! getBranches | grep -q "\b$onebranch\b"; then
-		printf "The branch $red%s$rs does not exist\n" "$onebranch" >&2
-		exit 7
+pushOneBranch() {
+	checkRemotes
+	# branches="$(git branch | tr -d '* ')"
+	if ! git branch | tr -d '* ' | grep -q "\b$branchToPush\b"; then
+		printf "The branch %b does not exist\n" "$(inColor 1 "$branchToPush")" >&2
+		exit 1
 	fi
 	
-	for r in $(getRemotes); do
-		echo "Pushing branch $red$onebranch$rs to remote $r"
-		git push "$r" "$onebranch"
+	for r in $remoteNames; do
+		printf "Pushing branch %b to remote %b" "$(inColor 1 "$branchToPush")" "$(inColor 2 "$r")"
+		git push "$r" "$branchToPush"
 	done
-	echo "Pushed branch $red$onebranch$rs to all remotes"
+	printf "Pushed branch %b to all remotes" "$(inColor 2 "$branchToPush")"
 }
 
-if ! ARGS=$(getopt -n "mahgits" -o ab:fhr -l init -- "$@"); then
+createAuthFile() {
+
+	authFileExists=0
+	[ -s "$authFile" ] && authFileExists=1 
+	[ "$authFileExists" -ne 1 ] || [ "$force" -eq 1 ] && {
+		[ "$authFileExists" -eq 1 ] && {
+			if file "$authFile" | grep -q GPG; then
+				printf "Decrypt current file in place\n"
+				sleep 3
+				if tmp="$(gpg -d "$authFile" 2> /dev/null)"; then
+					echo "$tmp" > "$authFile"
+					return 0
+				else
+					answer=""
+					ask "answer" "Failed to decrypt, $(inColor 1 'overwrite current file with defaults?') [n]" "n"
+					[ "$answer" = "n" ] && printf "Aborting...\n" && exit 1 
+				fi
+			fi
+		}
+		printf "Creating mahgits auth file at %b\n" "$(inColor 1 "$authFile")" >&2
+		printf "# This file will be encrypted
+# Insert the tokens, example: github	f0fda58630310a6dd91a7d8f0a4ceda2
+
+# Get the PAT at https://github.com/settings/tokens
+# Check the 'repo' scope
+github		PAT
+
+# Get the PAT at https://gitlab.com/-/profile/personal_access_tokens
+# Check the 'API' scope
+gitlab		PAT
+
+# Bitbucket uses app passwords 
+# Get the app password at https://bitbucket.org/account/settings/app-passwords/
+# Check the permissions: Repositories: Admin
+
+bitbucket	APP_PASSWORD\n" > "$authFile"
+	}
+
+}
+
+createGithubRepo() {
+	repoInfo="$(git remote get-url github)"
+	repoInfo="${repoInfo#*:}"
+
+	repoUser="${repoInfo%/*}"
+	repoName="${repoInfo#*/}"
+	
+	response="$(curl -s -X POST -H "Authorization: token $githubToken" -d "{\"name\":\"$repoName\", \"private\":\"true\"}" -w "\n%{http_code}\n" "$githubAPI")"
+	
+	status="$(echo "$response" | tail -1)"
+	response="$(echo "$response" | sed '$ d')"
+
+	if [ "$status" -eq 201 ]; then
+		printf "%b\n" "$(inColor 4 'Created github repo, api response:')"
+		printf "%b\n\n" "$(inColor 2 "$response")"
+	else	
+		printf "%b\n" "$(inColor 1 'Failed to create github repo, api response:')"
+		printf "%b\n\n" "$(inColor 3 "$response")"
+	fi 
+}
+
+createBitbucketRepo() {
+	projKeyFile='.git/bitbucketProjKey'
+	repoInfo="$(git remote get-url bitbucket)"
+	repoInfo="${repoInfo#*:}"
+
+	repoUser="${repoInfo%/*}"
+	repoName="${repoInfo#*/}"
+	
+	projectKey=''
+	[ "$force" -eq 1 ] && rm "$projKeyFile" > /dev/null 2>&1	
+
+	if [ -s "$projKeyFile" ]; then 
+		printf "Using bitbucket project key stored at: %b\n" "$(inColor 3 "$(realpath "$projKeyFile")")"
+		projectKey="$(cat "$projKeyFile")"
+	else
+		printf "%b\n" "$(inColor 1 'Bitbucket Project Key file not defined')"
+		printf "%b\n" "$(inColor 4 'You can get the key for a project at https://bitbucket.org/dashboard/projects')"
+		printf "%b\n" "$(inColor 4 'The new repo will be created in the provided project')"
+
+		okinput=0
+		answer=""
+		while [ $okinput -eq 0 ]; do
+			printf "%b" "$(inColor 1 'Enter the project key: ')" 
+			read -r projectKey
+			ask "answer" "Project Key: $(inColor 1 "$projectKey")\nConfirm?"
+			[ "$answer" = "y" ] && okinput=1;
+		done
+		echo "$projectKey" > "$projKeyFile"
+	fi
+	
+	response="$(curl -s -X POST -u "${repoUser}:${bitbucketToken}" -H "Content-type: application/json" -d "{ \"scm\": \"git\", \"is_private\": \"true\", \"project\":{\"key\":\"$projectKey\"}}" -w "\n%{http_code}\n" "${bitbucketAPI}/repositories/${repoUser}/${repoName}")"
+
+	status="$(echo "$response" | tail -1)"
+	response="$(echo "$response" | sed '$ d')"
+
+	if [ "$status" -eq 200 ]; then
+		printf "%b\n" "$(inColor 4 'Created bitbucket repo, api response:')"
+		printf "%b\n\n" "$(inColor 2 "$response")"
+	else
+		printf "%b\n" "$(inColor 1 'Failed to create bitbucket repo, api response:')"
+		printf "%b\n\n" "$(inColor 3 "$response")"
+	fi
+}
+
+createGitlabRepo() {
+	repoInfo="$(git remote get-url gitlab)"
+	repoInfo="${repoInfo#*:}"
+
+	repoUser="${repoInfo%/*}"
+	repoName="${repoInfo#*/}"
+
+	response="$(curl -s -X POST -H "PRIVATE-TOKEN: $gitlabToken" -w "\n%{http_code}\n" "${gitlabAPI}?name=${repoName}&visibility=private")"
+
+	status="$(echo "$response" | tail -1)"
+	response="$(echo "$response" | sed '$ d')"
+
+	if [ "$status" -eq 201 ]; then
+		printf "%b\n" "$(inColor 4 'Created gitlab repo, api response:')"
+		printf "%b\n\n" "$(inColor 2 "$response")"
+	else
+		printf "%b\n" "$(inColor 1 'Failed to create gitlab repo, api response:')"
+		printf "%b\n\n" "$(inColor 3 "$response")"
+	fi
+}
+
+createRepos() {
+	command -v gpg > /dev/null 2>&1 || printf "%b\n" "$(inColor 1 'You need gpg (GnuPG) installed to create remote repos')" && exit 1 
+	checkRemotes
+
+	umask 0077
+	
+	[ -d "$configDir" ] || {
+		printf "Creating mahgits config directory at %s\n" "$configDir" >&2
+		mkdir -p "$configDir"
+	}	
+
+	createAuthFile
+
+	if ! file "$authFile" | grep -q GPG; then
+		# shellcheck disable=SC2015
+		command -v vim > /dev/null 2>&1 && vim "$authFile" || nano "$authFile"
+		answer=""	
+		ask "answer" "Proceed to encrypt the tokens file '$authFile' ?"
+		[ "$answer" = "n" ] && echo "Aborting..." && exit 1
+		printf "%b\n" "\033[5;31mThis passphrase will be used to encrypt the tokens file\033[0m"
+		sleep 4
+		if gpg -c "$authFile"; then
+			mv "$authFile.gpg" "$authFile"
+		else
+			printf "Failed to encrypt file\nAborting...\n" && exit 1
+		fi
+	fi
+	
+	if ! tokens="$(gpg -d "$authFile" 2> /dev/null)"; then
+		printf "Failed to decrypt file\n"
+		answer=""
+		ask "answer" "$(inColor 1 'Clear gpg-agent passphrases cache and try again?') [n]" "n"
+		[ "$answer" = "y" ] && {
+			echo RELOADAGENT | gpg-connect-agent
+			if ! tokens="$(gpg -d "$authFile" 2> /dev/null)"; then
+				printf "Failed to decrypt file\n%b\n" "$(inColor 1 'Aborting...')"
+				exit 1
+			fi
+		} || exit 1
+	fi
+
+	githubToken="$(echo "$tokens" | grep '^github' | tr '\t' ' ')"
+	githubToken="${githubToken##* }"
+	bitbucketToken="$(echo "$tokens" | grep '^bitbucket' | tr '\t' ' ')"
+	bitbucketToken="${bitbucketToken##* }"
+	gitlabToken="$(echo "$tokens" | grep '^gitlab' | tr '\t' ' ')"
+	gitlabToken="${gitlabToken##* }"
+	
+	skipGithub=0
+	skipBitbucket=0
+	skipGitlab=0
+
+	if git remote show | grep -q 'origin'; then
+		originUrl="$(git remote get-url origin)"
+		case "$originUrl" in
+			*github*) skipGithub=1; printf "%b\n" "$(inColor 3 'Skipping github, found in origin')" ;;
+			*gitlab*) skipGitlab=1; printf "%b\n" "$(inColor 3 'Skipping gitlab, found in origin')" ;;
+			*bitbucket*) skipBitbucket=1; printf "%b\n" "$(inColor 3 'Skipping bitbucket, found in origin')" ;;
+		esac
+	fi
+
+	[ "$skipGithub" -eq 0 ] && createGithubRepo
+	[ "$skipGitlab" -eq 0 ] && createGitlabRepo
+	[ "$skipBitbucket" -eq 0 ] && createBitbucketRepo
+}
+
+run() {
+	
+	[ -d ".git" ] || {
+		printf "Not in a git directory.\nExiting...\n" >&2 
+		exit 1
+	}
+
+	chechSSHAgent
+	[ "$isInit" -eq 1 ] && initRemotes
+	[ "$pushAll" -eq 1 ] && pushAllBranches && exit 0
+	[ "$pushOne" -eq 1 ] && pushOneBranch && exit 0
+	[ "$createRepos" -eq 1 ] && createRepos && exit 0
+	
+	pushBranches && exit 0
+
+}
+
+# check quotting
+if ! ARGS="$(getopt -n "mahgits" -o ab:fhr -l init,create -- "$@")"; then
 	usage
-	exit 4
+	exit 1
 fi
 
 eval set -- "$ARGS"
 while : ; do
 	case "$1" in
-		-a) pushall=1; shift ;;
-		-b) pushone=1; onebranch="$2"; shift 2 ;;
+		-a) pushAll=1; shift ;;
+		-b) pushOne=1; branchToPush="$2"; shift 2 ;;
 		-f) force=1; shift ;;
 		-h) usage; exit 0 ;;
-		-r) rremotes=1; shift ;;
-		--init) isinit=1; shift ;;
+		-r) rRemotes=1; shift ;;
+		--init) isInit=1; shift ;;
+		--create) createRepos=1; shift ;;
 		--) shift; break ;;
-		*) echo "Unexpected option: $1" >&2; usage; exit 1 ;;
+		*) printf "Unexpected option: %s" "$1" >&2; usage; exit 1 ;;
 	esac
 done
 
-if [ -n "$1" ]; then
-	echo "Unexpected option  $1" >&2
+if [ -n "$1" ]; then 
+	printf "Unexpected extra option %s" "$1" >&2
 	usage
 	exit 1
 fi
 
-chechSSHAgent
-
-[ -n "$isinit" ] && initRemotes
-[ -n "$pushall" ] && pushall
-[ -n "$pushone" ] && pushone
-
-# default, no args
-if [ -z "${1+x}" ]; then
-	pushbranches
-fi
+run
 
