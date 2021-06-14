@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # Simple tool to add remotes for most used git hosts for the same repo
-# repos must be created before hand on listed hosts
 # for now only github, gitlab and bitbucket 
 
 # Disable file globbing
