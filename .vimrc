@@ -7,8 +7,12 @@ map <Leader>o o<ESC>
 map <Leader>O O<ESC> 
 
 "Jump between buffers 
-map <C-j> :bprev<CR>
-map <C-k> :bnext<CR>
+"map <C-j> :bnext<CR>
+"map <C-k> :bprev<CR>
+
+"Jump between tabs 
+map <C-j> :tabnext<CR>
+map <C-k> :tabprev<CR>
 
 "Copy paste system clipboard
 vnoremap <C-c> "+y
