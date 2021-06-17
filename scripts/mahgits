@@ -145,13 +145,14 @@ initRemotes() {
 			okInput=0
 			answer=""
 			while [ $okInput -eq 0 ]; do
-				printf "Enter the username ("$(inColor 3 'github')"): " >&2
+				whichRepo="$(inColor 3 'github')"
+				printf "Enter the username (%b): " "$whichRepo" >&2
 				read -r user
-				printf "Enter the repository name ("$(inColor 3 'github')"): " >&2
+				printf "Enter the repository name (%b): " "$whichRepo" >&2
 				read -r repo
 
 				githubRepo=":$user/$repo"
-				ask "answer" "user: "$(inColor 4 "$user")"\nrepo: "$(inColor 4 "$repo")"\n"$(inColor 1 'Confirm?')""
+				ask "answer" "user: $(inColor 4 "$user")\nrepo: $(inColor 4 "$repo")\n$(inColor 1 'Confirm?')"
 				[ "$answer" = "y" ] && okInput=1;
 			done
 		fi
@@ -160,13 +161,14 @@ initRemotes() {
 			okInput=0
 			answer=""
 			while [ $okInput -eq 0 ]; do
-				printf "Enter the username ("$(inColor 3 'gitlab')"): " >&2
+				whichRepo="$(inColor 3 'gitlab')"
+				printf "Enter the username (%b): " "$whichRepo" >&2
 				read -r user
-				printf "Enter the repository name ("$(inColor 3 'gitlab')"): " >&2
+				printf "Enter the repository name (%b): " "$whichRepo" >&2
 				read -r repo
 
 				gitlabRepo=":$user/$repo"
-				ask "answer" "user: "$(inColor 4 "$user")"\nrepo: "$(inColor 4 "$repo")"\n"$(inColor 1 'Confirm?')""
+				ask "answer" "user: $(inColor 4 "$user")\nrepo: $(inColor 4 "$repo")\n$(inColor 1 'Confirm?')"
 				[ "$answer" = "y" ] && okInput=1;
 			done
 		fi
@@ -175,13 +177,14 @@ initRemotes() {
 			okInput=0
 			answer=""
 			while [ $okInput -eq 0 ]; do
-				printf "Enter the username ("$(inColor 3 'bitbucket')"): " >&2
+				whichRepo="$(inColor 3 'bitbucket')"
+				printf "Enter the username (%b): " "$whichRepo" >&2
 				read -r user
-				printf "Enter the repository name ("$(inColor 3 'bitbucket')"): " >&2
+				printf "Enter the repository name (%b): " "$whichRepo" >&2
 				read -r repo
 
 				bitbucketRepo=":$user/$repo"
-				ask "answer" "user: "$(inColor 4 "$user")"\nrepo: "$(inColor 4 "$repo")"\n"$(inColor 1 'Confirm?')""
+				ask "answer" "user: $(inColor 4 "$user")\nrepo: $(inColor 4 "$repo")\n$(inColor 1 'Confirm?')"
 				[ "$answer" = "y" ] && okInput=1;
 			done
 		fi
@@ -195,7 +198,7 @@ initRemotes() {
 			read -r repo
 
 			tmpRepo=":$user/$repo"
-			ask "answer" "user: "$(inColor 4 "$user")"\nrepo: "$(inColor 4 "$repo")"\n"$(inColor 1 'Confirm?')""
+			ask "answer" "user: $(inColor 4 "$user")\nrepo: $(inColor 4 "$repo")\n$(inColor 1 'Confirm?')"
 			[ "$answer" = "y" ] && okInput=1;
 		done
 		githubRepo="$tmpRepo"
