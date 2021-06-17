@@ -7,19 +7,22 @@ startBrowser() {
 	while [ ! -e "$psd" ]; do
 		tries=$(( tries + 1 ))
 		sleep 1;
-		[ "$tries" -gt 60 ] && notify-send "Failed to start chrome in 1m" && exit 1
+		[ "$tries" -gt 60 ] && { notify-send "Failed to start chrome in 1m";  exit 1; }
 	done
 
 	notify-send "Starting chrome"
 	logmy.sh google-chrome-stable --force-dark-mode
 }
 
-feh --no-fehbg --recursive --bg-fill --randomize "$HOME/images/wallpaper" &
-notify-send "Starting ssh-agent";	eval "$(ssh-agent -t 1h)"
+if ! pidof ssh-agent > /dev/null ; then
+	notify-send "Starting ssh-agent"
+	eval "$(ssh-agent -t 1h)"
+fi
 
-sleep 3 && {  notify-send "Starting picom";		logmy.sh picom --experimental-backends; } &
-sleep 5 && {  notify-send "Starting pulseaudio";	logmy.sh pulseaudio --start; } &
-sleep 7 && {  notify-send "Starting dwmblocks";		logmy.sh dwmblocks; } &
-sleep 9 && {  notify-send "Starting discord";		logmy.sh discord; } &
-sleep 11 && {  startBrowser; } &
+sleep 3 && feh --no-fehbg --recursive --bg-fill --randomize "$HOME/images/wallpaper" &
+sleep 5 && { notify-send "Starting picom";		logmy.sh picom --experimental-backends; } &
+sleep 7 && { notify-send "Starting pulseaudio";		logmy.sh pulseaudio --start; } &
+sleep 9 && { notify-send "Starting dwmblocks";		logmy.sh dwmblocks; } &
+sleep 11 && { notify-send "Starting discord";		logmy.sh discord; } &
+sleep 13 && startBrowser &
 
