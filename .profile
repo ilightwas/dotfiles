@@ -64,7 +64,7 @@ export SYSPORTAGE_GIT_DIR="$XDG_DATA_HOME/sysportage"
 export XAUTHORITY 
 
 # Misc
-export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/.gtkrc-2.0"
+export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
 export _JAVA_AWT_WM_NONREPARENTING=1	# Fix for Java applications in dwm
 
 # startx on tty1
