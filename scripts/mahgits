@@ -1,7 +1,8 @@
 #!/bin/sh
 
-# Simple tool to manage repos across various git hosts
-# for now only github, gitlab and bitbucket 
+# Simple tool in POSIX shell to manage repos across various git hosts
+# For now only github, gitlab and bitbucket
+# Author: ilightwas <ilightwas@gmail.com>
 
 # Disable file globbing
 set -f
@@ -96,7 +97,7 @@ checkSSHAgent() {
 }
 
 prettyPrintRemote() {
-	printf "%b %b %b" "$(inColor 4 "$1")" "$(inColor 3 '@')" "$(inColor 1 $(git remote get-url "$1"))"
+	printf "%b %b %b" "$(inColor 4 "$1")" "$(inColor 3 '@')" "$(inColor 1 "$(git remote get-url "$1")")"
 }
 
 checkRemotes() {
@@ -493,7 +494,7 @@ createRepos() {
 	bitbucketToken="$(echo "$bitbucketToken" | sed 's/[ \t]*$//')"
 	bitbucketToken="${bitbucketToken##* }"
 
-	[ -z "$githubToken" -o -z "$gitlabToken" -o -z "$bitbucketToken" ] && { printf "%b\n" "$(inColor 1 'Some api token is not set correctly, use --create -f to configure again')"; exit 1; }
+	[ -z "$githubToken" ] || [ -z "$gitlabToken" ] || [ -z "$bitbucketToken" ] && { printf "%b\n" "$(inColor 1 'Some api token is not set correctly, use --create -f to configure again')"; exit 1; }
 	
 	skipGithub=0
 	skipBitbucket=0
