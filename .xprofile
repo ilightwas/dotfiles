@@ -19,6 +19,9 @@ if ! pidof ssh-agent > /dev/null ; then
 	eval "$(ssh-agent -t 1h)"
 fi
 
+# Disable X mouse accel
+xset m 0 0 &
+
 sleep 3 && feh --no-fehbg --recursive --bg-fill --randomize "$HOME/images/wallpaper" &
 sleep 5 && { notify-send "Starting picom";		logmy.sh picom --experimental-backends; } &
 sleep 7 && { notify-send "Starting pulseaudio";		logmy.sh pulseaudio --start; } &
