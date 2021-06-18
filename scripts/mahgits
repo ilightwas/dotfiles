@@ -6,6 +6,9 @@
 # Disable file globbing
 set -f
 
+# debug
+# set -x
+
 [ -n "$XDG_CONFIG_HOME" ] && configDir="$XDG_CONFIG_HOME/mahgits" || configDir="$HOME/.config/mahgits"
 
 authFile="$configDir/auth"
@@ -90,6 +93,10 @@ checkSSHAgent() {
 		printf "%b\n" "$(inColor 2 'Starting ssh-agent on current shell')"
 		eval "$(ssh-agent)"
 	fi
+}
+
+prettyPrintRemote() {
+	printf "%b %b %b" "$(inColor 4 "$1")" "$(inColor 3 '@')" "$(inColor 1 $(git remote get-url "$1"))"
 }
 
 checkRemotes() {
@@ -245,7 +252,7 @@ pushAllBranches() {
 	checkRemotes
 	checkSSHAgent
 	for r in $remoteNames; do
-		printf "Pushing all branches to remote: %b\n" "$(inColor 3 "$r")"
+		printf "Pushing all branches to remote %b\n" "$(prettyPrintRemote "$r")"
 		git push --all "$r"
 	done
 	printf "%b\n" "$(inColor 2 'Pushed all branches to all remotes')"
@@ -255,11 +262,12 @@ removeRemotes() {
 	for r in $remoteNames; do
 		for cr in $curRemotes; do
 			[ "$r" = "$cr" ] && {
-				printf "Removing '%b' remote\n" "$(inColor 1 "$r")"
+				printf "Removing '%b' remote\n" "$(prettyPrintRemote "$r")"
 				git remote remove "$r"
 			}
 		done
 	done
+#	printf "%b\n" "$(inColor 2 'Remotes removed')"
 }
 
 pushBranches() {
@@ -280,11 +288,11 @@ pushBranches() {
 	fi
 
 	for r in $remoteNames; do
-		printf "Pushing '%b' to remote '%b'\n" "$(inColor 3 "$btopush")" "$(inColor 2 "$r")"
+		printf "Pushing '%b' to remote '%b'\n" "$(inColor 5 "$btopush")" "$(prettyPrintRemote "$r")"
 		# shellcheck disable=SC2086
 		git push "$r" $btopush # word splitting
 	done
-	printf "%b '%b' %b\n" "$(inColor 2 'Pushed branches:')" "$(inColor 3 "$btopush")" "$(inColor 2 'to all remotes')"
+	printf "%b '%b' %b\n" "$(inColor 2 'Pushed branches:')" "$(inColor 5 "$btopush")" "$(inColor 2 'to all remotes')"
 }
 
 pushOneBranch() {
@@ -296,10 +304,10 @@ pushOneBranch() {
 	fi
 	
 	for r in $remoteNames; do
-		printf "Pushing branch %b to remote %b" "$(inColor 2 "$branchToPush")" "$(inColor 2 "$r")"
+		printf "Pushing branch %b to remote %b" "$(inColor 2 "$branchToPush")" "$(prettyPrintRemote "$r")"
 		git push "$r" "$branchToPush"
 	done
-	printf "Pushed branch %b to all remotes" "$(inColor 2 "$branchToPush")"
+	printf "Pushed branch %b to all remotes\n" "$(inColor 2 "$branchToPush")"
 }
 
 createAuthFile() {
@@ -322,7 +330,8 @@ createAuthFile() {
 		}
 		printf "Creating mahgits auth file at %b\n" "$(inColor 2 "$authFile")"
 
-printf "# This file will be encrypted
+printf "
+# This file will be encrypted
 # Insert the tokens, example: github	f0fda58630310a6dd91a7d8f0a4ceda2
 
 # Get the PAT at https://github.com/settings/tokens
@@ -356,10 +365,10 @@ createGithubRepo() {
 	response="$(echo "$response" | sed '$ d')"
 
 	if [ "$status" -eq 201 ]; then
-		printf "%b\n" "$(inColor 4 'Created github repo, api response:')"
+		printf "\n%b\n" "$(inColor 4 'Created github repo, api response:')"
 		printf "%b\n\n" "$(inColor 2 "$response")"
 	else	
-		printf "%b\n" "$(inColor 1 'Failed to create github repo, api response:')"
+		printf "\n%b\n" "$(inColor 1 'Failed to create github repo, api response:')"
 		printf "%b\n\n" "$(inColor 3 "$response")"
 	fi 
 }
@@ -386,7 +395,7 @@ createBitbucketRepo() {
 		okInput=0
 		answer=""
 		while [ $okInput -eq 0 ]; do
-			printf "%b" "$(inColor 4 'Enter the project key: ')" >&2
+			printf "%b" "$(inColor 3 'Enter the project key: ')" >&2
 			read -r projectKey
 			ask "answer" "Project Key: $(inColor 1 "$projectKey")\nConfirm?"
 			[ "$answer" = "y" ] && okInput=1;
@@ -401,10 +410,10 @@ createBitbucketRepo() {
 	response="$(echo "$response" | sed '$ d')"
 
 	if [ "$status" -eq 200 ]; then
-		printf "%b\n" "$(inColor 4 'Created bitbucket repo, api response:')"
+		printf "\n%b\n" "$(inColor 4 'Created bitbucket repo, api response:')"
 		printf "%b\n\n" "$(inColor 2 "$response")"
 	else
-		printf "%b\n" "$(inColor 1 'Failed to create bitbucket repo, api response:')"
+		printf "\n%b\n" "$(inColor 1 'Failed to create bitbucket repo, api response:')"
 		printf "%b\n\n" "$(inColor 3 "$response")"
 	fi
 }
@@ -422,16 +431,16 @@ createGitlabRepo() {
 	response="$(echo "$response" | sed '$ d')"
 
 	if [ "$status" -eq 201 ]; then
-		printf "%b\n" "$(inColor 4 'Created gitlab repo, api response:')"
+		printf "\n%b\n" "$(inColor 4 'Created gitlab repo, api response:')"
 		printf "%b\n\n" "$(inColor 2 "$response")"
 	else
-		printf "%b\n" "$(inColor 1 'Failed to create gitlab repo, api response:')"
+		printf "\n%b\n" "$(inColor 1 'Failed to create gitlab repo, api response:')"
 		printf "%b\n\n" "$(inColor 3 "$response")"
 	fi
 }
 
 createRepos() {
-	command -v gpg > /dev/null 2>&1 || printf "%b\n" "$(inColor 1 'You need gpg (GnuPG) installed to create remote repos')" >&2 && exit 1 
+	command -v gpg > /dev/null || { printf "%b\n" "$(inColor 1 'You need gpg (GnuPG) installed to create remote repos')" >&2; exit 1; } 
 	checkRemotes
 
 	umask 0077
@@ -473,11 +482,18 @@ createRepos() {
 	fi
 
 	githubToken="$(echo "$tokens" | grep '^github' | tr '\t' ' ')"
+	githubToken="$(echo "$githubToken" | sed 's/[ \t]*$//')"
 	githubToken="${githubToken##* }"
-	bitbucketToken="$(echo "$tokens" | grep '^bitbucket' | tr '\t' ' ')"
-	bitbucketToken="${bitbucketToken##* }"
+
 	gitlabToken="$(echo "$tokens" | grep '^gitlab' | tr '\t' ' ')"
+	gitlabToken="$(echo "$gitlabToken" | sed 's/[ \t]*$//')"
 	gitlabToken="${gitlabToken##* }"
+
+	bitbucketToken="$(echo "$tokens" | grep '^bitbucket' | tr '\t' ' ')"
+	bitbucketToken="$(echo "$bitbucketToken" | sed 's/[ \t]*$//')"
+	bitbucketToken="${bitbucketToken##* }"
+
+	[ -z "$githubToken" -o -z "$gitlabToken" -o -z "$bitbucketToken" ] && { printf "%b\n" "$(inColor 1 'Some api token is not set correctly, use --create -f to configure again')"; exit 1; }
 	
 	skipGithub=0
 	skipBitbucket=0
@@ -531,12 +547,12 @@ while : ; do
 		--init) isInit=1; shift ;;
 		--create) createRepos=1; shift ;;
 		--) shift; break ;;
-		*) printf "Unexpected option: %s" "$1" >&2; usage; exit 1 ;;
+		*) printf "%b %b\n" "$(inColor 1 "Unexpected option:")" "$(inColor 3 "$1")" >&2; usage; exit 1 ;;
 	esac
 done
 
 if [ -n "$1" ]; then 
-	printf "Unexpected extra option %s" "$1" >&2
+	printf "%b %b\n" "$(inColor 1 "Unexpected extra option:")" "$(inColor 3 "$1")" >&2
 	usage
 	exit 1
 fi
