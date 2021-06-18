@@ -40,7 +40,8 @@ if [ -n "$failsafe" ]; then
     # source xprofile
     [ -f /etc/xprofile ] && . /etc/xprofile
     [ -f "$HOME/.xprofile" ] && . "$HOME/.xprofile"
-    exec startdwm.sh
+    exec dbus-launch --exit-with-session startdwm.sh
 else
     exec $command
 fi
+
