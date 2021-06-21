@@ -1,4 +1,7 @@
+# any git repo
 **/.git/*/**
+
+# home
 .cache
 .dbus
 .mozilla
@@ -8,11 +11,29 @@
 .themes
 .vscode-oss
 .w3m
+.VirtualBox
+.npm
+.gnupg
+
+# folders
+desktop
+documents
+downloads
+music
+pictures
+public
+repos
+suckless
+templates
+videos
+images
 
 # .config
 .config/discord
 .config/google-chr*
 .config/spotify
+.config/transmission/resume
+.config/transmission/torrents
 
 # VSCodium settings
 .config/VSCodium/*
@@ -27,16 +48,5 @@
 .local/share/sysportage
 .local/share/icons
 .local/share/Trash
-
-# folders
-desktop
-documents
-downloads
-music
-pictures
-public
-repos
-suckless
-templates
-videos
-win
+.local/share/multimc
+.local/share/mypaint
