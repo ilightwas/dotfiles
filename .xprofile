@@ -23,7 +23,7 @@ fi
 xset m 0 0 &
 
 sleep 3 && feh --no-fehbg --recursive --bg-fill --randomize "$HOME/images/wallpaper" &
-sleep 5 && { notify-send "Starting picom";		logmy.sh picom --experimental-backends; } &
+sleep 5 && { notify-send "Starting picom";		logmy.sh picom; } &
 sleep 7 && { notify-send "Starting pulseaudio";		logmy.sh pulseaudio --start; } &
 sleep 9 && { notify-send "Starting dwmblocks";		logmy.sh dwmblocks; } &
 sleep 11 && { notify-send "Starting discord";		logmy.sh discord; } &
