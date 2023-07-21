@@ -60,8 +60,7 @@ export DOTFILES_GIT_DIR="$XDG_DATA_HOME/dotfiles"
 export SYSPORTAGE_GIT_DIR="$XDG_DATA_HOME/sysportage"
 
 # Xauthority
-[ -z "$XDG_RUNTIME_DIR" ] && XAUTHORITY="$XDG_CACHE_HOME/Xauthority" || XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
-export XAUTHORITY 
+#[ -z "$XDG_RUNTIME_DIR" ] && export XAUTHORITY="$XDG_CACHE_HOME/Xauthority" || export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
 
 # Misc
 export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
