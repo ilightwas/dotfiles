@@ -40,6 +40,9 @@ if [ -n "$failsafe" ]; then
     # source xprofile
     [ -f /etc/xprofile ] && . /etc/xprofile
     [ -f "$HOME/.xprofile" ] && . "$HOME/.xprofile"
+    #Fix "Authorization required, but no authorization protocol specified" when running graphical apps as root
+    xhost si:localuser:root
+
     exec startdwm.sh
 else
     exec $command
