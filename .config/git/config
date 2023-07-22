@@ -5,3 +5,5 @@
 	branch = false
 [credential]
 	credentialStore = gpg
+[core]
+	sshCommand = ssh -o 'AddKeysToAgent yes'
