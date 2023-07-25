@@ -50,3 +50,7 @@ alias codiumd="GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$HOME codium -n $HOME"
 alias codiums="GIT_DIR=$SYSPORTAGE_GIT_DIR GIT_WORK_TREE=/etc/portage codium -n /etc/portage"
 
 alias gchrome="logmy.sh google-chrome-stable --force-dark-mode & disown"
+
+# X error checking
+alias xerrorcheck="grep -E 'WW|EE' .local/share/xorg/Xorg.0.log"
+
