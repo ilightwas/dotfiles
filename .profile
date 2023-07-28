@@ -44,6 +44,11 @@ export LESS_TERMCAP_so=$(printf %b '\e[1;33m') # Page line
 export LESS_TERMCAP_ue=$(printf %b '\e[0m')
 export LESS_TERMCAP_us=$(printf %b '\e[1;31m') # Highlights 
 
+# Xauthority
+[ -z "$XDG_RUNTIME_DIR" ] && XAUTHORITY="$XDG_CACHE_HOME/Xauthority" || XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
+touch "$XAUTHORITY"
+export XAUTHORITY
+
 # Enviroment vars
 export EDITOR="nvim"
 export VISUAL="nvim"

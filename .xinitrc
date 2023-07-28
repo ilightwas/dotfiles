@@ -45,11 +45,6 @@ if [ -n "$failsafe" ]; then
    # source xprofile
     [ -f /etc/xprofile ] && . /etc/xprofile
     [ -f "$HOME/.xprofile" ] && . "$HOME/.xprofile"
-    
-    # Xauthority
-    [ -z "$XDG_RUNTIME_DIR" ] && XAUTHORITY="$XDG_CACHE_HOME/Xauthority" || XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
-    #touch "$XAUTHORITY"
-    export XAUTHORITY
 
     #Fix "Authorization required, but no authorization protocol specified" when running graphical apps as root
     xhost si:localuser:root
