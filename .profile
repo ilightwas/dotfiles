@@ -68,5 +68,13 @@ export SYSPORTAGE_GIT_DIR="$XDG_DATA_HOME/sysportage"
 export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
 export _JAVA_AWT_WM_NONREPARENTING=1	# Fix for Java applications in dwm
 
+# vaapi NVDEC driver for firefox
+# https://github.com/elFarto/nvidia-vaapi-driver
+export LIBVA_DRIVER_NAME="nvidia"
+export MOZ_DISABLE_RDD_SANDBOX=1
+export NVD_BACKEND="direct"
+#export NVD_LOG="/home/ilightwas/.vanv.log"
+
 # startx on tty1
 [ "$(tty)" = "/dev/tty1" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec startx
+
