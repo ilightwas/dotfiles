@@ -1,12 +1,21 @@
 # Manage dotfiles with bare git repo
 alias gitd="git --git-dir=$DOTFILES_GIT_DIR --work-tree=$HOME"
 alias gits="git --git-dir=$SYSPORTAGE_GIT_DIR --work-tree=/etc/portage"
+alias gitdsd='gitd diff --staged'
+alias gitssd='gits diff --staged'
 alias cdp="cd /etc/portage"
 alias cdk="cd /usr/src/linux"
+alias cdx11="cd /etc/X11"
 
 # Suckless
-alias srein="sudo make clean install"
-alias csrein="rm -f config.h && sudo make clean install"
+if command -v doas > /dev/null; then
+	alias srein="doas make clean install"
+	#alias csrein="rm -f config.h && doas make clean install"
+else
+	alias srein="sudo make clean install"
+	#alias csrein="rm -f config.h && sudo make clean install"
+fi
+
 alias dwmq="killall startdwm.sh"
 
 # Colors
@@ -34,6 +43,8 @@ alias \
 
 # Portage
 alias aemerge="PORTAGE_NICENESS=-7 emerge" #aggressive emerge
+alias eefc="eselect fontconfig"
+alias eeke="eselect kernel"
 
 # wget hsts file
 alias wget="wget --hsts-file $XDG_CACHE_HOME/wget-hsts"
