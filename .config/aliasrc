@@ -40,6 +40,7 @@ alias wget="wget --hsts-file $XDG_CACHE_HOME/wget-hsts"
 
 # Misc
 alias sudo='sudo '
+alias doas='doas '
 alias codium='vscodium'
 alias codiumgit="GIT_DIR=.git GIT_WORK_TREE=. codium -n"
 alias codiumdwm="codiumgit $SUCKLESS_DIR/dwm"

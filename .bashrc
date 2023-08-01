@@ -19,6 +19,9 @@ stty -ixon
 
 # Put your fun stuff here.
 
+# Doas autocompletion
+complete -cf doas
+
 # Source my custom general aliases
 if [ -f "$HOME/.config/aliasrc" ] ; then
 	. "$HOME/.config/aliasrc"
