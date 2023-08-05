@@ -69,6 +69,7 @@ export SYSPORTAGE_GIT_DIR="$XDG_DATA_HOME/sysportage"
 
 # Misc
 export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
+export QT_STYLE_OVERRIDE=adwaita-dark	# x11-themes/adwaita-qt
 export _JAVA_AWT_WM_NONREPARENTING=1	# Fix for Java applications in dwm
 
 # vaapi NVDEC driver for firefox
