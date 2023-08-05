@@ -1,8 +1,15 @@
 # Manage dotfiles with bare git repo
 alias gitd="git --git-dir=$DOTFILES_GIT_DIR --work-tree=$HOME"
-alias gits="git --git-dir=$SYSPORTAGE_GIT_DIR --work-tree=/etc/portage"
 alias gitdsd='gitd diff --staged'
+alias gitdd='gitd diff'
+alias gitds='gitd status -uno'
+
+# Manage portage with bare git repo
+alias gits="git --git-dir=$SYSPORTAGE_GIT_DIR --work-tree=/etc/portage"
 alias gitssd='gits diff --staged'
+alias gitsd='gits diff'
+alias gitss='gits status -uno'
+
 alias cdp="cd /etc/portage"
 alias cdk="cd /usr/src/linux"
 alias cdx11="cd /etc/X11"
