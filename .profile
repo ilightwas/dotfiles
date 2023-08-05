@@ -26,6 +26,8 @@ export XDG_PUBLICSHARE_DIR="$HOME/public"
 export XDG_TEMPLATES_DIR="$HOME/templates"
 export XDG_VIDEOS_DIR="$HOME/videos"
 
+export WALLPAPERS="$XDG_PICTURES_DIR/wallpapers"
+
 # History
 export HISTSIZE=100000
 export HISTFILESIZE=100000
