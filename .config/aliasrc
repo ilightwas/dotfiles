@@ -1,75 +1,96 @@
+[ -n "$(command -v doas)" ] && sutool='doas' ||	sutool='sudo'
+[ -n "$(command -v nvim)" ] && alias v='nvim' || alias v='vim'
+
 # Manage dotfiles with bare git repo
-alias gitd="git --git-dir=$DOTFILES_GIT_DIR --work-tree=$HOME"
+alias gitd='git --git-dir=$DOTFILES_GIT_DIR --work-tree=$HOME'
 alias gitdsd='gitd diff --staged'
 alias gitdd='gitd diff'
 alias gitds='gitd status -uno'
 
 # Manage portage with bare git repo
-alias gits="git --git-dir=$SYSPORTAGE_GIT_DIR --work-tree=/etc/portage"
+alias gits='git --git-dir=$SYSPORTAGE_GIT_DIR --work-tree=/etc/portage'
 alias gitssd='gits diff --staged'
 alias gitsd='gits diff'
 alias gitss='gits status -uno'
 
-alias cdp="cd /etc/portage"
-alias cdk="cd /usr/src/linux"
-alias cdx11="cd /etc/X11"
+# portage settings
+alias chmake="$sutool v /etc/portage/make.conf"
+alias chacckey="$sutool v /etc/portage/package.accept_keywords"
+alias chuse="$sutool v /etc/portage/package.use/package.use"
+alias chlicense="$sutool v /etc/portage/package.license"
+alias chmask="$sutool v /etc/portage/package.mask"
+
+# emerge
+alias e='emerge'
+alias upgradeset='$sutool emerge --ask --update --deep --changed-use'
+alias upworld="$sutool emerge --ask --update --deep --changed-use @world"
+alias aemerge='PORTAGE_NICENESS=-7 emerge' #aggressive emerge
+
+# eselect
+alias eefc='eselect fontconfig'
+alias eeke='eselect kernel'
 
 # Suckless
-if command -v doas > /dev/null; then
-	alias srein="doas make clean install"
-	#alias csrein="rm -f config.h && doas make clean install"
-else
-	alias srein="sudo make clean install"
-	#alias csrein="rm -f config.h && sudo make clean install"
-fi
-
-alias dwmq="killall startdwm.sh"
+#alias csrein='rm -f config.h && $sutool make clean install'
+#alias csrein='rm -f config.h && $sutool make clean install'
+alias srein="$sutool make clean install"
+alias dwmq='killall startdwm.sh'
+alias dwmr='kill $(pidof dwm)'
 
 # Colors
 alias \
-	ls="ls --color=auto --group-directories-first" \
-	grep="grep --color=auto" \
-	egrep="egrep --color=auto" \
-	fgrep="fgrep --color=auto" \
-	diff="diff --color=auto"
+	ls='ls --color=auto --group-directories-first' \
+	grep='grep --color=auto' \
+	egrep='egrep --color=auto' \
+	fgrep='fgrep --color=auto' \
+	diff='diff --color=auto' \
+	dmesg='dmesg --color=always'
 
 # Verbosity
 alias \
-	cp="cp -iv" \
-	mv="mv -iv" \
-	rm="rm -Iv" \
-	mkdir="mkdir -pv" \
+	cp='cp -iv' \
+	mv='mv -iv' \
+	rm='rm -Iv' \
+	mkdir='mkdir -pv' \
 
 # Navigation
 alias \
-	..="cd .." \
-	...="cd ../.." \
-	ll="ls -la" \
-	la="ls -a" \
-	l.="ls -a | egrep '^\.'" \
+	ll='ls -laF' \
+	la='ls -a' \
+	l.='ls -a | egrep "^\."' \
 
-# Portage
-alias aemerge="PORTAGE_NICENESS=-7 emerge" #aggressive emerge
-alias eefc="eselect fontconfig"
-alias eeke="eselect kernel"
+alias ..='cd ..'
+alias ...='cd ../..'
+alias cdp='cd /etc/portage'
+alias cdk='cd /usr/src/linux'
+alias cdx11='cd /etc/X11'
 
 # wget hsts file
-alias wget="wget --hsts-file $XDG_CACHE_HOME/wget-hsts"
+alias wget='wget --hsts-file $XDG_CACHE_HOME/wget-hsts'
 
 # Misc
 alias sudo='sudo '
 alias doas='doas '
+alias d='doas '
 alias codium='vscodium'
-alias codiumgit="GIT_DIR=.git GIT_WORK_TREE=. codium -n"
-alias codiumdwm="codiumgit $SUCKLESS_DIR/dwm"
-alias codiumst="codiumgit $SUCKLESS_DIR/st"
-alias codiumdmenu="codiumgit $SUCKLESS_DIR/dmenu"
-alias codiumblocks="codiumgit $SUCKLESS_DIR/dwmblocks"
-alias codiumd="GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$HOME codium -n $HOME"
-alias codiums="GIT_DIR=$SYSPORTAGE_GIT_DIR GIT_WORK_TREE=/etc/portage codium -n /etc/portage"
-
-alias gchrome="logmy.sh google-chrome-stable --force-dark-mode & disown"
+alias codiumgit='GIT_DIR=.git GIT_WORK_TREE=. codium -n'
+alias codiumdwm='codiumgit $SUCKLESS_DIR/dwm'
+alias codiumst='codiumgit $SUCKLESS_DIR/st'
+alias codiumdmenu='codiumgit $SUCKLESS_DIR/dmenu'
+alias codiumblocks='codiumgit $SUCKLESS_DIR/dwmblocks'
+alias codiumd='GIT_DIR=$DOTFILES_GIT_DIR GIT_WORK_TREE=$HOME codium -n $HOME'
+alias codiums='GIT_DIR=$SYSPORTAGE_GIT_DIR GIT_WORK_TREE=/etc/portage codium -n /etc/portage'
+alias xclipc='xclip -selection clipboard'
+alias gchrome='logmy.sh google-chrome-stable --force-dark-mode & disown'
+alias grepi='grep -i'
 
 # X error checking
-alias xerrorcheck="grep -E 'WW|EE' .local/share/xorg/Xorg.0.log"
+alias xerrorcheck='grep -E "WW|EE" .local/share/xorg/Xorg.0.log'
 
+# update stuff
+alias chalias='v ~/.config/aliasrc'
+alias xresources='xrdb -merge ~/.Xresources'
+alias todo='v ~/todo.txt'
+
+#cleanup
+unset sutool
