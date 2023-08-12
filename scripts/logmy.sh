@@ -9,5 +9,7 @@ if [ ! -d "$cmdlogdir" ] ; then
 fi
 
 echo "Starting log at $(date +%T)" >> "$cmdlogfile"
+
 # Log both stdout/stderr
-"$@" >> "$cmdlogfile" 2>&1
+exec "$@" >> "$cmdlogfile" 2>&1
+
