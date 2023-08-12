@@ -1,7 +1,7 @@
 #!/bin/sh
 
-mylogdir="$XDG_CACHE_HOME/mylogs"
-cmdlogdir="$mylogdir/$1"
+logdir="$HOME/.mylogs"
+cmdlogdir="$logdir/$1"
 cmdlogfile="$cmdlogdir/$1-$(date +%d-%m-%Y).log"
 
 if [ ! -d "$cmdlogdir" ] ; then

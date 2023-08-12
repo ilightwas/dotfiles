@@ -78,7 +78,7 @@ export NVD_BACKEND="direct"
 sfile="$HOME/.config/session"
 [ "$(tty)" = "/dev/tty1" ] && [ -f "$sfile" ] && {
     s="$(cat "$sfile")"
-    [ "$s" = "x" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec logmy.sh startx.sh
-    [ "$s" = "w" ] && exec logmy.sh hypr.sh
+    [ "$s" = "x" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec log.sh startx.sh
+    [ "$s" = "w" ] && exec log.sh hypr.sh
 } 
  
