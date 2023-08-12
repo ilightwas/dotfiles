@@ -79,6 +79,8 @@ sfile="$HOME/.config/session"
 [ "$(tty)" = "/dev/tty1" ] && [ -f "$sfile" ] && {
     s="$(cat "$sfile")"
     [ "$s" = "x" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec log.sh startx.sh
-    [ "$s" = "w" ] && exec log.sh hypr.sh
+    [ "$s" = "w" ] && {
+      ssh-agent.sh log.sh hypr.sh
+    }
 } 
  
