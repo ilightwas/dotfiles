@@ -74,6 +74,11 @@ export MOZ_DISABLE_RDD_SANDBOX=1
 export NVD_BACKEND="direct"
 #export NVD_LOG="/home/ilightwas/.vanv.log"
 
-# startx on tty1
-[ "$(tty)" = "/dev/tty1" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec startx
-
+# startx or Hyprland on tty1
+sfile="$HOME/.config/session"
+[ "$(tty)" = "/dev/tty1" ] && [ -f "$sfile" ] && {
+    s="$(cat "$sfile")"
+    [ "$s" = "x" ] && ! pidof -s Xorg >/dev/null 2>&1 && exec logmy.sh startx.sh
+    [ "$s" = "w" ] && exec logmy.sh hypr.sh
+} 
+ 
