@@ -1,4 +1,3 @@
-
 startBrowser() {
 	# psd service init script modified to create this tmp file after finish starting
 	psd="/tmp/psdstarted"
@@ -11,7 +10,7 @@ startBrowser() {
 	done
 
 	notify-send "Starting chrome"
-	logmy.sh google-chrome-stable --force-dark-mode
+	log.sh google-chrome-stable --force-dark-mode
 }
 
 ssh-agent.sh &
@@ -19,10 +18,23 @@ ssh-agent.sh &
 # Disable X mouse accel
 xset m 0 0 &
 
+setxkbmap -model pc105 -layout us,br \
+    -option grp:lctrl_lwin_toggle \
+    -option caps:ctrl_modifier &
+
+# Switch escape and caps lock or alt_gr
+#xmodmap -e 'keycode 66 = Escape' & #caps
+#xmodmap -e 'keycode 108 = Caps_Lock' & #alt_gr
+#xmodmap -e 'keycode 9 = Caps_Lock' & #escape
+#xmodmap -e 'clear lock' & 
+#xmodmap -pke > .config/xmodmap
+
+[ -f "$HOME/.config/xmodmap" ] && xmodmap "$HOME/.config/xmodmap" &
+
 sleep 3 && feh --no-fehbg --recursive --bg-fill --randomize "$HOME/images/wallpaper" &
-sleep 5 && { notify-send "Starting picom";		logmy.sh picom; } &
-sleep 7 && { notify-send "Starting pulseaudio";		logmy.sh pulseaudio --start; } &
-sleep 9 && { notify-send "Starting dwmblocks";		logmy.sh dwmblocks; } &
-sleep 11 && { notify-send "Starting discord";		logmy.sh discord; } &
-sleep 13 && startBrowser &
+sleep 5 && { notify-send "Starting picom"; log.sh picom; } &
+sleep 7 && { notify-send "Starting pulseaudio"; log.sh pulseaudio --start; } &
+sleep 9 && { notify-send "Starting dwmblocks"; log.sh dwmblocks; } &
+sleep 11 && { notify-send "Starting discord"; log.sh discord; } &
+#sleep 13 && startBrowser &
 

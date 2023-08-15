@@ -1,5 +1,6 @@
 [ -n "$(command -v doas)" ] && sutool='doas' ||	sutool='sudo'
 [ -n "$(command -v nvim)" ] && alias v='nvim' || alias v='vim'
+[ -n "$(command -v bat)" ] && alias cat='bat'
 
 # Manage dotfiles with bare git repo
 alias gitd='git --git-dir=$DOTFILES_GIT_DIR --work-tree=$HOME'
@@ -19,6 +20,7 @@ alias chacckey="$sutool v /etc/portage/package.accept_keywords"
 alias chuse="$sutool v /etc/portage/package.use/package.use"
 alias chlicense="$sutool v /etc/portage/package.license"
 alias chmask="$sutool v /etc/portage/package.mask"
+alias dconf="$sutool dispatch-conf"
 
 # emerge
 alias e='emerge'
@@ -55,7 +57,7 @@ alias \
 
 # Navigation
 alias \
-	ll='ls -laF' \
+	ll='ls -lahF' \
 	la='ls -a' \
 	l.='ls -a | egrep "^\."' \
 
@@ -91,6 +93,8 @@ alias xerrorcheck='grep -E "WW|EE" .local/share/xorg/Xorg.0.log'
 alias chalias='v ~/.config/aliasrc'
 alias xresources='xrdb -merge ~/.Xresources'
 alias todo='v ~/todo.txt'
+alias chfonts='v ~/.config/fontconfig/fonts.conf'
+alias chland='v ~/.config/hypr/hyprland.conf'
 
 #cleanup
 unset sutool
