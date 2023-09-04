@@ -29,10 +29,13 @@ export XDG_VIDEOS_DIR="$HOME/videos"
 export WALLPAPERS="$XDG_PICTURES_DIR/wallpapers"
 
 # History
-export HISTSIZE=100000
-export HISTFILESIZE=100000
+export HISTSIZE=
+export HISTFILESIZE=
 export HISTTIMEFORMAT="%d/%m/%y %T "
 export HISTFILE="$XDG_DATA_HOME/history"
+# Force prompt to write history after every command.
+# http://superuser.com/questions/20900/bash-history-loss
+PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 
 #less
 export LESSHISTFILE="$XDG_CACHE_HOME/lesshst"
