@@ -96,5 +96,9 @@ alias todo='v ~/todo.txt'
 alias chfonts='v ~/.config/fontconfig/fonts.conf'
 alias chland='v ~/.config/hypr/hyprland.conf'
 
+# ssh
+alias ssh='TERM=xterm-256color ssh'
+
 #cleanup
 unset sutool
+
