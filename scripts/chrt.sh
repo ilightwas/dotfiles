@@ -21,7 +21,7 @@ check_mount_points() {
 }
 
 mount_filesystems() {
-  echo "Mouting filesystems for environment"
+  echo "Mounting filesystems for environment"
 
   mount -v --types proc /proc "${chroot_dir}/proc"
   mount -v --rbind /sys "${chroot_dir}/sys"
